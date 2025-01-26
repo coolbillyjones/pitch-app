@@ -3,7 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Custom Website</title>
+  <title>Pitch</title>
+
+  <!-- Link to Google Fonts for IBM Plex Mono -->
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
+  
   <style>
     /* Overall page styling */
     html, body {
@@ -14,90 +18,241 @@
       height: 100%; /* Allow full-height flex layout */
     }
     body {
-      display: flex; /* We'll use flex to keep the left toolbar & main section side by side */
+      /* Keep the left toolbar and main section side by side */
+      display: flex;
     }
 
     /* Left customize toolbar styling */
     .customize-toolbar {
       background-color: #555; /* Dark grey */
-      width: 20%;
+      width: calc(20% + 10px); /* Extended by 5px */
       min-width: 200px;
       color: #fff;
-      padding: 1rem;
+      padding: 0; /* Remove existing padding to handle it within child elements */
+      box-sizing: border-box; /* Ensure padding is included in width */
+      position: relative; /* For any absolute positioning if needed */
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Black header container for PITCH title and logo */
+    .header-container {
+      background-color: #000; /* Black background */
+      width: 100%;
+      padding: 1rem; /* Padding inside the header */
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-sizing: border-box;
+    }
+    .pitch-circle-icon {
+      width: 50px; /* Increased size for better visibility */
+      height: 50px; /* Increased size for better visibility */
+      object-fit: contain; /* Ensures the entire logo is visible */
+    }
+    .pitch-title {
+      font-size: 3rem; /* Increased font size */
+      font-weight: bold; /* Make the title bold */
+      margin: 0;
     }
 
     /* Main content area styling */
     .main-section {
+      /* Occupies the remaining 80% of width */
       width: 80%;
       display: flex;
-      justify-content: center;  /* Center horizontally */
-      align-items: center;      /* Center vertically */
-      min-height: 100vh;        /* Occupy full viewport height */
+      flex-direction: column;
+      justify-content: flex-start; /* Align items to the top */
+      align-items: flex-start;      /* Align items to the left */
+      min-height: 100vh;            /* Occupy full viewport height */
+      margin: 0 auto;
+      padding: 1rem 2rem;           /* Reduced top padding to bring "Pitch Mode" closer to top */
+      box-sizing: border-box;       /* Ensure padding is included in width */
+      font-family: Arial, sans-serif; /* Default font for main-section */
+      position: relative;           /* For any absolute positioning if needed */
     }
 
-    /* Labels for radio and checkbox groups */
+    /* Pitch Mode container in main-section */
+    .pitch-mode-main {
+      width: 25%; /* Approximately 1/4 of its current size */
+      max-width: 200px; /* Optional: limit maximum width */
+      margin-bottom: 125px; /* Increased spacing from 100px to 125px */
+    }
+    .pitch-mode-main label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: bold;
+    }
+    .pitch-mode-main select {
+      width: 100%;
+      padding: 0.5rem;
+      border-radius: 5px;
+      border: none;
+      font-size: 1rem;
+      box-sizing: border-box; /* Ensure padding is included in width */
+    }
+
+    /* Container that holds circle/rectangle row + response below */
+    .circle-rectangle-response-container {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;  /* Left-align the items internally */
+    }
+
+    /* Circle + rectangle side by side */
+    .circle-rectangle-container {
+      display: flex;
+      gap: 20px; /* Space between circle and rectangle */
+      margin-bottom: 20px;
+      align-items: center; /* Ensure vertical alignment */
+    }
+
+    /* Labels for radio and checkbox groups in the sidebar */
     .customize-toolbar label {
       font-weight: bold;
       display: block;
-      margin-top: 1rem;
-      margin-bottom: 0.5rem;
+      margin-top: 0.5 rem;
+      margin-bottom: 0.75rem;
+      margin-left: 10px; /* Added to shift labels right by 5px */
     }
-
     .radio-group,
     .checkbox-group {
-      margin-left: 1rem;
+      margin-left: 5px; /* Already adjusted to 5px */
     }
-
-    /* Each radio button on its own line */
+    /* Put each radio/checkbox on its own line */
     .radio-group label,
     .checkbox-group label {
-      display: block;      /* Put each option on its own line */
-      font-weight: normal; /* Remove bold for individual items if desired */
+      display: block;
+      font-weight: normal;
       margin-bottom: 0.5rem;
     }
-.click-circle {
-  width: 50px;
-  height: 50px;
-  background-color: red;
-  border-radius: 50%;
-  cursor: pointer;
-  margin-right: 2rem;
-  position: relative; /* needed for pseudo-element */
-}
 
-/* Pseudo-element for white square (hidden by default) */
-.click-circle::after {
-  content: "";
-  display: none;            /* start hidden */
-  width: 20px;
-  height: 20px;
-  background-color: white;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
+    /* Red clickable circle */
+    .click-circle {
+      width: 100px;
+      height: 100px;
+      background-color: red;
+      border-radius: 50%;
+      position: relative;   /* For the white square inside */
+      cursor: pointer;
+    }
 
-/* Show the white square when .show-square is toggled on */
-.click-circle.show-square::after {
-  display: block;
-}
+    /* White square inside the circle (starts hidden) */
+    .white-square {
+      width: 50px;
+      height: 50px;
+      background-color: white;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: none; /* Hidden by default */
+    }
+    .click-circle.show-square .white-square {
+      display: block;
+    }
 
-/* The rectangle is always there */
-.color-rectangle {
-  width: 400px;   /* example width */
-  height: 100px;  /* example height */
-  background-color: black;
-}
+    /* Rectangle + overlay container */
+    .rectangle-wrapper {
+      position: relative;
+      width: 700px;
+      height: 100px;
+    }
+    .color-rectangle {
+      width: 100%;
+      height: 100%;
+      background-color: black;
+      border-radius: 25px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+    }
+    .overlay-image {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 2; /* Above rectangle */
+      width: 100%;
+      height: 100%;
+      object-fit: cover; /* or 'contain' */
+      display: none;
+      border-radius: 25px;
+    }
 
+    /* Response section below */
+    .response-section {
+      margin-top: 20px; /* Space above the response section */
+      width: 800px; /* Match the rectangle's width */
+    }
 
+    /* Make the label appear above the textarea */
+    .response-section label {
+      display: block;
+      margin-bottom: 5px; /* small gap above the textarea */
+      font-weight: normal; /* Changed from 'regular' to 'normal' */
+    }
+
+    /*
+      Style the textarea to use the "GT" font and make it 200px tall
+    */
+    #response {
+      width: 100%; /* Use full width of container */
+      height: 200px; /* Set height to 200px */
+      font-size: 1rem;  /* Adjust text size if needed */
+      resize: none;     /* Remove manual resizer handle (optional) */
+      font-family: 'GT', monospace; /* Apply the "GT" font */
+      font-weight: regular; /* Make text bold */
+      padding: 0.5rem; /* Add some padding */
+      box-sizing: border-box; /* Ensure padding is included in width */
+    }
+
+    /* Define the "GT" font using @font-face */
+    @font-face {
+      font-family: 'GT';
+      src: url('fonts/GT-Regular.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    /* Style the "Other" input and button in the sidebar */
+    .customize-toolbar form {
+      display: flex;
+      flex-direction: column;
+      padding: 1rem; /* Add padding inside the form */
+    }
+    .customize-toolbar input[type="text"] {
+      padding: 0.5rem;
+      border-radius: 5px;
+      border: none;
+      margin-bottom: 0.5rem;
+      box-sizing: border-box; /* Ensure padding is included in width */
+    }
+    .customize-toolbar button {
+      padding: 0.5rem;
+      border-radius: 5px;
+      border: none;
+      background-color: #777;
+      color: #fff;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    .customize-toolbar button:hover {
+      background-color: #999;
+    }
   </style>
 </head>
 <body>
 
   <!-- Left Section: Customize Toolbar -->
   <div class="customize-toolbar">
-    <h2>Customize</h2>
+    <!-- Black Header Container with PITCH Logo and Title -->
+    <div class="header-container">
+      <img src="PitchLogo.png" alt="PitchLogo" class="pitch-circle-icon">
+      <h1 class="pitch-title">PITCH</h1>
+    </div>
+
+     <h2 style="padding-left: 1rem;">Customize</h2>
 
     <!-- Audience Size with radio buttons -->
     <label>Audience Size</label>
@@ -106,59 +261,100 @@
         <input type="radio" name="audienceSize" value="1" id="audience-1" />
         1 person
       </label>
-      <label for="audience-2">
+      <label for="audience-2-4">
         <input type="radio" name="audienceSize" value="2-4" id="audience-2-4" />
         2-4 people
       </label>
-      <label for="audience-3">
+      <label for="audience-5-10">
         <input type="radio" name="audienceSize" value="5-10" id="audience-5-10" />
         5-10 people
       </label>
-      <label for="audience-5">
+      <label for="audience-10-30">
         <input type="radio" name="audienceSize" value="10-30" id="audience-10-30" />
         10-30 people
       </label>
-      <label for="audience-10">
+      <label for="audience-30+">
         <input type="radio" name="audienceSize" value="30+" id="audience-30+" />
-       30+ people
+        30+ people
       </label>
     </div>
 
-    <!-- Gestures with checkboxes -->
-    <label>Gestures</label>
+    <!-- Checkboxes -->
+    <label>Specifics</label>
     <div class="checkbox-group">
-      <label for="eye-contact">
-        <input type="checkbox" name="gestures" value="Eye contact" id="eye-contact" />
-        Eye contact
+      <label for="Stuttering">
+        <input type="checkbox" name="Stuttering" value="Stuttering" id="Stuttering" />
+        Stuttering
       </label>
-      <label for="hand-movement">
-        <input type="checkbox" name="gestures" value="Hand movement" id="hand-movement" />
-        Hand movement
+      <label for="Language">
+        <input type="checkbox" name="Language/Vocabulary" value="Language/Vocabulary" id="Language" />
+        Language/Vocabulary
       </label>
-      <label for="body-language">
-        <input type="checkbox" name="gestures" value="Body Language" id="body-language" />
-        Body Language
+      <label for="Tone">
+        <input type="checkbox" name="Tone & Mood" value="Tone & Mood" id="Tone" />
+        Tone & Mood
+      </label>
+      <label for="Volume">
+        <input type="checkbox" name="Volume" value="Volume" id="Volume" />
+        Volume
       </label>
     </div>
 
-    <!-- Other with fill in the blank -->
-    <label for="otherInput">Other</label>
-    <input type="text" id="otherInput" name="other" placeholder="Type here..." />
+    <!-- 'Other' with a text box -->
+    <form onsubmit="return captureAndUpdate();">
+      <label for="other">Other:</label>
+      <input type="text" id="other" name="Other" placeholder="Type here..." required>
+      <button type="submit">Enter</button>
+    </form>
   </div>
 
-  <!-- Main Content Section -->
+  <!-- Main Section (right side) -->
   <div class="main-section">
-    <!-- Red clickable circle & black rectangle -->
-    <div class="click-circle" id="clickCircle"></div>
-    <div class="color-rectangle" id="colorRectangle"></div>
+    <!-- Pitch Mode Dropdown moved to Main Section -->
+    <div class="pitch-mode-main">
+      <label for="pitchMode">Pitch Mode</label>
+      <select id="pitchMode" name="PitchMode">
+        <option value="audioOnly" selected>Audio Only</option>
+        <option value="videoOfPitch">Video of Pitch</option>
+        <option value="presentationSlides">Presentation Slides</option>
+      </select>
+    </div>
+
+    <!-- Container that holds circle/rectangle row + response below -->
+    <div class="circle-rectangle-response-container">
+      <div class="circle-rectangle-container">
+        <!-- Red circle + white square -->
+        <div class="click-circle" id="clickCircle">
+          <div class="white-square" id="whiteSquare"></div>
+        </div>
+
+        <!-- Rectangle wrapper for black rectangle + overlay image -->
+        <div class="rectangle-wrapper">
+          <div class="color-rectangle" id="colorRectangle"></div>
+          <!-- Replace src with your actual image if needed -->
+          <img
+            src="soundwaves.png"
+            alt="Overlay Image"
+            class="overlay-image"
+            id="overlayImage"
+          >
+        </div>
+      </div>
+
+      <!-- Response section below, label above the textarea -->
+      <div class="response-section">
+        <label for="response">Response:</label>
+        <textarea id="response" name="Response" placeholder="Enter something..."></textarea>
+      </div>
+    </div>
   </div>
 
-  <!-- Simple JavaScript to handle user selections and color change -->
+  <!-- JavaScript -->
   <script>
-    // This variable will store the audience size chosen by the user.
-    let audienceSize = null;
+    
 
-    // All radio buttons for audience size
+    // Handle Audience Size radio buttons
+    let audienceSize = null;
     const radioButtons = document.querySelectorAll('input[name="audienceSize"]');
     radioButtons.forEach((radio) => {
       radio.addEventListener('change', () => {
@@ -167,15 +363,34 @@
       });
     });
 
- const circle = document.getElementById('clickCircle');
-const rectangle = document.getElementById('colorRectangle');
+    // Handle Pitch Mode dropdown
+    const pitchModeSelect = document.getElementById("pitchMode");
+    pitchModeSelect.addEventListener('change', () => {
+      const pitchMode = pitchModeSelect.value;
+      console.log("Pitch Mode selected:", pitchMode);
+      // You can add additional functionality here based on the selected pitch mode
+    });
 
-circle.addEventListener('click', () => {
-  circle.classList.toggle('show-square');
+    // Circle toggles white square + overlay image
+    const circle = document.getElementById("clickCircle");
+    const overlayImage = document.getElementById("overlayImage");
 
-});
+    circle.addEventListener("click", function() {
+      // Toggle the white square
+      circle.classList.toggle("show-square");
 
-
+      // Toggle the overlay image
+      if (overlayImage.style.display === "none" || overlayImage.style.display === "") {
+        overlayImage.style.display = "block";
+        document.getElementById("response").value = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHHHHHHHHHHHHHHH";
+    
+      } else {
+        overlayImage.style.display = "none";
+        document.getElementById("response").value = "";
+    
+      }
+      
+    });
   </script>
 </body>
 </html>
