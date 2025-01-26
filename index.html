@@ -74,8 +74,8 @@
 
     /* Pitch Mode container in main-section */
     .pitch-mode-main {
-      width: 25%; /* Approximately 1/4 of its current size */
-      max-width: 200px; /* Optional: limit maximum width */
+      width: 100%; /* Update to take full width of container */
+      max-width: 400px; /* Optional: adjust as needed */
       margin-bottom: 125px; /* Increased spacing from 100px to 125px */
     }
     .pitch-mode-main label {
@@ -83,13 +83,37 @@
       margin-bottom: 0.5rem;
       font-weight: bold;
     }
-    .pitch-mode-main select {
-      width: 100%;
+    .pitch-mode-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px; /* Space between dropdown and upload button */
+    }
+    .pitch-mode-controls select {
+      flex: 1; /* Take up available space */
       padding: 0.5rem;
       border-radius: 5px;
       border: none;
       font-size: 1rem;
       box-sizing: border-box; /* Ensure padding is included in width */
+    }
+    .upload-button {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      background-color: #777;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+      text-align: center;
+      text-decoration: none;
+    }
+    .upload-button:hover {
+      background-color: #999;
+    }
+    /* Hide the actual file input */
+    #uploadAudio {
+      display: none;
     }
 
     /* Container that holds circle/rectangle row + response below */
@@ -111,7 +135,7 @@
     .customize-toolbar label {
       font-weight: bold;
       display: block;
-      margin-top: 0.5 rem;
+      margin-top: 0.5rem;
       margin-bottom: 0.75rem;
       margin-left: 10px; /* Added to shift labels right by 5px */
     }
@@ -135,6 +159,9 @@
       border-radius: 50%;
       position: relative;   /* For the white square inside */
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     /* White square inside the circle (starts hidden) */
@@ -176,8 +203,25 @@
       width: 100%;
       height: 100%;
       object-fit: cover; /* or 'contain' */
-      display: none;
+      /* Removed display: none; to allow animation */
       border-radius: 25px;
+    }
+
+    /* New Overlay Div for Animation */
+    .image-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%; /* Start fully covering the image */
+      height: 100%;
+      background-color: white; /* Same as container background */
+      transition: width 2s ease-in-out; /* Smooth transition */
+      z-index: 3; /* Above the image */
+      pointer-events: none; /* Allows clicks to pass through */
+    }
+
+    .image-overlay.reveal {
+      width: 0%; /* Reveal the image by shrinking the overlay */
     }
 
     /* Response section below */
@@ -313,11 +357,16 @@
     <!-- Pitch Mode Dropdown moved to Main Section -->
     <div class="pitch-mode-main">
       <label for="pitchMode">Pitch Mode</label>
-      <select id="pitchMode" name="PitchMode">
-        <option value="audioOnly" selected>Audio Only</option>
-        <option value="videoOfPitch">Video of Pitch</option>
-        <option value="presentationSlides">Presentation Slides</option>
-      </select>
+      <div class="pitch-mode-controls">
+        <select id="pitchMode" name="PitchMode">
+          <option value="audioOnly" selected>Audio Only</option>
+          <option value="videoOfPitch">Video of Pitch</option>
+          <option value="presentationSlides">Presentation Slides</option>
+        </select>
+        <!-- Upload Audio Button -->
+        <label for="uploadAudio" class="upload-button">Upload Audio</label>
+        <input type="file" id="uploadAudio" name="uploadAudio" accept="audio/*">
+      </div>
     </div>
 
     <!-- Container that holds circle/rectangle row + response below -->
@@ -338,6 +387,8 @@
             class="overlay-image"
             id="overlayImage"
           >
+          <!-- New Overlay Div for Animation -->
+          <div class="image-overlay" id="imageOverlay"></div>
         </div>
       </div>
 
@@ -371,26 +422,49 @@
       // You can add additional functionality here based on the selected pitch mode
     });
 
-    // Circle toggles white square + overlay image
+    // Handle Upload Audio
+    const uploadInput = document.getElementById("uploadAudio");
+    const uploadLabel = document.querySelector(".upload-button");
+
+    uploadLabel.addEventListener("click", () => {
+      uploadInput.click();
+    });
+
+    uploadInput.addEventListener("change", () => {
+      if (uploadInput.files.length > 0) {
+        const file = uploadInput.files[0];
+        console.log("Uploaded file:", file.name);
+        // You can add additional functionality here to handle the uploaded file
+      }
+    });
+
+    // Circle toggles white square + overlay image with animation
     const circle = document.getElementById("clickCircle");
     const overlayImage = document.getElementById("overlayImage");
+    const imageOverlay = document.getElementById("imageOverlay");
 
     circle.addEventListener("click", function() {
       // Toggle the white square
       circle.classList.toggle("show-square");
 
-      // Toggle the overlay image
-      if (overlayImage.style.display === "none" || overlayImage.style.display === "") {
-        overlayImage.style.display = "block";
+      // Toggle the reveal class on the image overlay to animate
+      imageOverlay.classList.toggle("reveal");
+
+      // Optional: Change textarea content based on state
+      if (imageOverlay.classList.contains('reveal')) {
         document.getElementById("response").value = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHHHHHHHHHHHHHHH";
-    
       } else {
-        overlayImage.style.display = "none";
         document.getElementById("response").value = "";
-    
       }
       
     });
+
+    // Placeholder function for form submission (you can implement as needed)
+    function captureAndUpdate() {
+      // Implement form submission logic here
+      alert("Form submitted!");
+      return false; // Prevent actual form submission for demonstration
+    }
   </script>
 </body>
 </html>
