@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Custom Website</title>
+  <style>
+    /* Overall page styling */
+    html, body {
+      margin: 0;
+      padding: 0;
+      background-color: #ccc; /* Light grey */
+      font-family: Arial, sans-serif;
+      height: 100%; /* Allow full-height flex layout */
+    }
+    body {
+      display: flex; /* We'll use flex to keep the left toolbar & main section side by side */
+    }
+
+    /* Left customize toolbar styling */
+    .customize-toolbar {
+      background-color: #555; /* Dark grey */
+      width: 20%;
+      min-width: 200px;
+      color: #fff;
+      padding: 1rem;
+    }
+
+    /* Main content area styling */
+    .main-section {
+      width: 80%;
+      display: flex;
+      justify-content: center;  /* Center horizontally */
+      align-items: center;      /* Center vertically */
+      min-height: 100vh;        /* Occupy full viewport height */
+    }
+
+    /* Labels for radio and checkbox groups */
+    .customize-toolbar label {
+      font-weight: bold;
+      display: block;
+      margin-top: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .radio-group,
+    .checkbox-group {
+      margin-left: 1rem;
+    }
+
+    /* Each radio button on its own line */
+    .radio-group label,
+    .checkbox-group label {
+      display: block;      /* Put each option on its own line */
+      font-weight: normal; /* Remove bold for individual items if desired */
+      margin-bottom: 0.5rem;
+    }
+.click-circle {
+  width: 50px;
+  height: 50px;
+  background-color: red;
+  border-radius: 50%;
+  cursor: pointer;
+  margin-right: 2rem;
+  position: relative; /* needed for pseudo-element */
+}
+
+/* Pseudo-element for white square (hidden by default) */
+.click-circle::after {
+  content: "";
+  display: none;            /* start hidden */
+  width: 20px;
+  height: 20px;
+  background-color: white;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Show the white square when .show-square is toggled on */
+.click-circle.show-square::after {
+  display: block;
+}
+
+/* The rectangle is always there */
+.color-rectangle {
+  width: 400px;   /* example width */
+  height: 100px;  /* example height */
+  background-color: black;
+}
+
+
+  </style>
+</head>
+<body>
+
+  <!-- Left Section: Customize Toolbar -->
+  <div class="customize-toolbar">
+    <h2>Customize</h2>
+
+    <!-- Audience Size with radio buttons -->
+    <label>Audience Size</label>
+    <div class="radio-group">
+      <label for="audience-1">
+        <input type="radio" name="audienceSize" value="1" id="audience-1" />
+        1 person
+      </label>
+      <label for="audience-2">
+        <input type="radio" name="audienceSize" value="2-4" id="audience-2-4" />
+        2-4 people
+      </label>
+      <label for="audience-3">
+        <input type="radio" name="audienceSize" value="5-10" id="audience-5-10" />
+        5-10 people
+      </label>
+      <label for="audience-5">
+        <input type="radio" name="audienceSize" value="10-30" id="audience-10-30" />
+        10-30 people
+      </label>
+      <label for="audience-10">
+        <input type="radio" name="audienceSize" value="30+" id="audience-30+" />
+       30+ people
+      </label>
+    </div>
+
+    <!-- Gestures with checkboxes -->
+    <label>Gestures</label>
+    <div class="checkbox-group">
+      <label for="eye-contact">
+        <input type="checkbox" name="gestures" value="Eye contact" id="eye-contact" />
+        Eye contact
+      </label>
+      <label for="hand-movement">
+        <input type="checkbox" name="gestures" value="Hand movement" id="hand-movement" />
+        Hand movement
+      </label>
+      <label for="body-language">
+        <input type="checkbox" name="gestures" value="Body Language" id="body-language" />
+        Body Language
+      </label>
+    </div>
+
+    <!-- Other with fill in the blank -->
+    <label for="otherInput">Other</label>
+    <input type="text" id="otherInput" name="other" placeholder="Type here..." />
+  </div>
+
+  <!-- Main Content Section -->
+  <div class="main-section">
+    <!-- Red clickable circle & black rectangle -->
+    <div class="click-circle" id="clickCircle"></div>
+    <div class="color-rectangle" id="colorRectangle"></div>
+  </div>
+
+  <!-- Simple JavaScript to handle user selections and color change -->
+  <script>
+    // This variable will store the audience size chosen by the user.
+    let audienceSize = null;
+
+    // All radio buttons for audience size
+    const radioButtons = document.querySelectorAll('input[name="audienceSize"]');
+    radioButtons.forEach((radio) => {
+      radio.addEventListener('change', () => {
+        audienceSize = radio.value;
+        console.log("Audience Size selected:", audienceSize);
+      });
+    });
+
+ const circle = document.getElementById('clickCircle');
+const rectangle = document.getElementById('colorRectangle');
+
+circle.addEventListener('click', () => {
+  circle.classList.toggle('show-square');
+
+});
+
+
+  </script>
+</body>
+</html>
